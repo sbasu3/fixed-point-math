@@ -10,63 +10,46 @@
  */
 
 /* ========================================================================
- * Q1.6 Format Functions
+ * Generic Function Template Macros
+ * These macros generate function declarations for all fixed-point formats
  * ======================================================================== */
 
-/* Trigonometric functions */
-q1_6_t q1_6_sin(q1_6_t angle);
-q1_6_t q1_6_cos(q1_6_t angle);
-q1_6_t q1_6_tan(q1_6_t angle);
+#define DECLARE_FIXED_POINT_FUNCTIONS(Q_FORMAT)          \
+    /* Conversion functions */                           \
+    Q_FORMAT##_t Q_FORMAT##_from_float(float value);     \
+    Q_FORMAT##_t Q_FORMAT##_from_double(double value);   \
+    float Q_FORMAT##_to_float(Q_FORMAT##_t value);       \
+    double Q_FORMAT##_to_double(Q_FORMAT##_t value);     \
+                                                         \
+    /* Trigonometric functions */                        \
+    Q_FORMAT##_t Q_FORMAT##_sin(Q_FORMAT##_t angle);     \
+    Q_FORMAT##_t Q_FORMAT##_cos(Q_FORMAT##_t angle);     \
+    Q_FORMAT##_t Q_FORMAT##_tan(Q_FORMAT##_t angle);     \
+                                                         \
+    /* Inverse trigonometric functions */                \
+    Q_FORMAT##_t Q_FORMAT##_asin(Q_FORMAT##_t value);    \
+    Q_FORMAT##_t Q_FORMAT##_acos(Q_FORMAT##_t value);    \
+    Q_FORMAT##_t Q_FORMAT##_atan(Q_FORMAT##_t value);    \
+                                                         \
+    /* Other mathematical functions */                   \
+    Q_FORMAT##_t Q_FORMAT##_sqrt(Q_FORMAT##_t value);    \
+    Q_FORMAT##_t Q_FORMAT##_inverse(Q_FORMAT##_t value); \
+    Q_FORMAT##_t Q_FORMAT##_log(Q_FORMAT##_t value);     \
+    Q_FORMAT##_t Q_FORMAT##_exp(Q_FORMAT##_t value);
 
-/* Inverse trigonometric functions */
-q1_6_t q1_6_asin(q1_6_t value);
-q1_6_t q1_6_acos(q1_6_t value);
-q1_6_t q1_6_atan(q1_6_t value);
-
-/* Other mathematical functions */
-q1_6_t q1_6_sqrt(q1_6_t value);
-q1_6_t q1_6_inverse(q1_6_t value);
-q1_6_t q1_6_log(q1_6_t value);
-q1_6_t q1_6_exp(q1_6_t value);
+/* ========================================================================
+ * Q1.6 Format Functions
+ * ======================================================================== */
+DECLARE_FIXED_POINT_FUNCTIONS(q1_6)
 
 /* ========================================================================
  * Q1.14 Format Functions
  * ======================================================================== */
-
-/* Trigonometric functions */
-q1_14_t q1_14_sin(q1_14_t angle);
-q1_14_t q1_14_cos(q1_14_t angle);
-q1_14_t q1_14_tan(q1_14_t angle);
-
-/* Inverse trigonometric functions */
-q1_14_t q1_14_asin(q1_14_t value);
-q1_14_t q1_14_acos(q1_14_t value);
-q1_14_t q1_14_atan(q1_14_t value);
-
-/* Other mathematical functions */
-q1_14_t q1_14_sqrt(q1_14_t value);
-q1_14_t q1_14_inverse(q1_14_t value);
-q1_14_t q1_14_log(q1_14_t value);
-q1_14_t q1_14_exp(q1_14_t value);
+DECLARE_FIXED_POINT_FUNCTIONS(q1_14)
 
 /* ========================================================================
  * Q1.30 Format Functions
  * ======================================================================== */
-
-/* Trigonometric functions */
-q1_30_t q1_30_sin(q1_30_t angle);
-q1_30_t q1_30_cos(q1_30_t angle);
-q1_30_t q1_30_tan(q1_30_t angle);
-
-/* Inverse trigonometric functions */
-q1_30_t q1_30_asin(q1_30_t value);
-q1_30_t q1_30_acos(q1_30_t value);
-q1_30_t q1_30_atan(q1_30_t value);
-
-/* Other mathematical functions */
-q1_30_t q1_30_sqrt(q1_30_t value);
-q1_30_t q1_30_inverse(q1_30_t value);
-q1_30_t q1_30_log(q1_30_t value);
-q1_30_t q1_30_exp(q1_30_t value);
+DECLARE_FIXED_POINT_FUNCTIONS(q1_30)
 
 #endif /* FIXED_POINT_MATH_H */
