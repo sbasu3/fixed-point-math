@@ -11,10 +11,10 @@ int main(void) {
     printf("Fixed-Point Math Library Test\n");
     printf("==============================\n\n");
     
-    /* Test Q1.7 functions */
-    printf("Testing Q1.7 format functions:\n");
-    q1_7_t q7_result = q1_7_sin(0);
-    printf("  q1_7_sin(0) = %d\n", (int)q7_result);
+    /* Test Q1.6 functions */
+    printf("Testing Q1.6 format functions:\n");
+    q1_6_t q6_result = q1_6_sin(0);
+    printf("  q1_6_sin(0) = %d\n", (int)q6_result);
     
     /* Test Q1.14 functions */
     printf("\nTesting Q1.14 format functions:\n");

@@ -9,10 +9,10 @@
  * Total bits = m + n + 1 (sign bit)
  */
 
-/* Q1.7 format: 1 sign bit, 1 integer bit, 7 fractional bits (8-bit total) */
-typedef int8_t q1_7_t;
-#define Q1_7_FRACTIONAL_BITS 7
-#define Q1_7_ONE (1 << Q1_7_FRACTIONAL_BITS)
+/* Q1.6 format: 1 sign bit, 1 integer bit, 6 fractional bits (8-bit total) */
+typedef int8_t q1_6_t;
+#define Q1_6_FRACTIONAL_BITS 6
+#define Q1_6_ONE (1 << Q1_6_FRACTIONAL_BITS)
 
 /* Q1.14 format: 1 sign bit, 1 integer bit, 14 fractional bits (16-bit total) */
 typedef int16_t q1_14_t;

@@ -6,28 +6,28 @@
 /*
  * Fixed-Point Math Library
  * Processor-independent mathematical functions for fixed-point arithmetic
- * Supports Q1.7, Q1.14, and Q1.30 formats
+ * Supports Q1.6, Q1.14, and Q1.30 formats
  */
 
 /* ========================================================================
- * Q1.7 Format Functions
+ * Q1.6 Format Functions
  * ======================================================================== */
 
 /* Trigonometric functions */
-q1_7_t q1_7_sin(q1_7_t angle);
-q1_7_t q1_7_cos(q1_7_t angle);
-q1_7_t q1_7_tan(q1_7_t angle);
+q1_6_t q1_6_sin(q1_6_t angle);
+q1_6_t q1_6_cos(q1_6_t angle);
+q1_6_t q1_6_tan(q1_6_t angle);
 
 /* Inverse trigonometric functions */
-q1_7_t q1_7_asin(q1_7_t value);
-q1_7_t q1_7_acos(q1_7_t value);
-q1_7_t q1_7_atan(q1_7_t value);
+q1_6_t q1_6_asin(q1_6_t value);
+q1_6_t q1_6_acos(q1_6_t value);
+q1_6_t q1_6_atan(q1_6_t value);
 
 /* Other mathematical functions */
-q1_7_t q1_7_sqrt(q1_7_t value);
-q1_7_t q1_7_inverse(q1_7_t value);
-q1_7_t q1_7_log(q1_7_t value);
-q1_7_t q1_7_exp(q1_7_t value);
+q1_6_t q1_6_sqrt(q1_6_t value);
+q1_6_t q1_6_inverse(q1_6_t value);
+q1_6_t q1_6_log(q1_6_t value);
+q1_6_t q1_6_exp(q1_6_t value);
 
 /* ========================================================================
  * Q1.14 Format Functions

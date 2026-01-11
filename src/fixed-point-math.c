@@ -6,66 +6,66 @@
  */
 
 /* ========================================================================
- * Q1.7 Format Function Implementations
+ * Q1.6 Format Function Implementations
  * ======================================================================== */
 
-q1_7_t q1_7_sin(q1_7_t angle) {
+q1_6_t q1_6_sin(q1_6_t angle) {
     (void)angle;
-    /* TODO: Implement sine function for Q1.7 format */
+    /* TODO: Implement sine function for Q1.6 format */
     return 0;
 }
 
-q1_7_t q1_7_cos(q1_7_t angle) {
+q1_6_t q1_6_cos(q1_6_t angle) {
     (void)angle;
-    /* TODO: Implement cosine function for Q1.7 format */
+    /* TODO: Implement cosine function for Q1.6 format */
     return 0;
 }
 
-q1_7_t q1_7_tan(q1_7_t angle) {
+q1_6_t q1_6_tan(q1_6_t angle) {
     (void)angle;
-    /* TODO: Implement tangent function for Q1.7 format */
+    /* TODO: Implement tangent function for Q1.6 format */
     return 0;
 }
 
-q1_7_t q1_7_asin(q1_7_t value) {
+q1_6_t q1_6_asin(q1_6_t value) {
     (void)value;
-    /* TODO: Implement arcsine function for Q1.7 format */
+    /* TODO: Implement arcsine function for Q1.6 format */
     return 0;
 }
 
-q1_7_t q1_7_acos(q1_7_t value) {
+q1_6_t q1_6_acos(q1_6_t value) {
     (void)value;
-    /* TODO: Implement arccosine function for Q1.7 format */
+    /* TODO: Implement arccosine function for Q1.6 format */
     return 0;
 }
 
-q1_7_t q1_7_atan(q1_7_t value) {
+q1_6_t q1_6_atan(q1_6_t value) {
     (void)value;
-    /* TODO: Implement arctangent function for Q1.7 format */
+    /* TODO: Implement arctangent function for Q1.6 format */
     return 0;
 }
 
-q1_7_t q1_7_sqrt(q1_7_t value) {
+q1_6_t q1_6_sqrt(q1_6_t value) {
     (void)value;
-    /* TODO: Implement square root function for Q1.7 format */
+    /* TODO: Implement square root function for Q1.6 format */
     return 0;
 }
 
-q1_7_t q1_7_inverse(q1_7_t value) {
+q1_6_t q1_6_inverse(q1_6_t value) {
     (void)value;
-    /* TODO: Implement inverse (1/x) function for Q1.7 format */
+    /* TODO: Implement inverse (1/x) function for Q1.6 format */
     return 0;
 }
 
-q1_7_t q1_7_log(q1_7_t value) {
+q1_6_t q1_6_log(q1_6_t value) {
     (void)value;
-    /* TODO: Implement natural logarithm function for Q1.7 format */
+    /* TODO: Implement natural logarithm function for Q1.6 format */
     return 0;
 }
 
-q1_7_t q1_7_exp(q1_7_t value) {
+q1_6_t q1_6_exp(q1_6_t value) {
     (void)value;
-    /* TODO: Implement exponential function for Q1.7 format */
+    /* TODO: Implement exponential function for Q1.6 format */
     return 0;
 }
 
