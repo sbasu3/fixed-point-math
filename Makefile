@@ -50,7 +50,7 @@ tests: $(LIBRARY) $(TEST_BINARIES)
 
 # Compile test executables
 $(BIN_DIR)/%: $(TEST_DIR)/%.c $(LIBRARY) | $(BIN_DIR)
-	$(CC) $(CFLAGS) $(INCLUDES) $< $(LIBRARY) -o $@
+	$(CC) $(CFLAGS) $(INCLUDES) $< $(LIBRARY) -o $@ -lm
 	@echo "Test binary created: $@"
 
 # Run tests

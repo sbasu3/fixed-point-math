@@ -14,42 +14,48 @@
  * These macros generate function declarations for all fixed-point formats
  * ======================================================================== */
 
-#define DECLARE_FIXED_POINT_FUNCTIONS(Q_FORMAT)          \
-    /* Conversion functions */                           \
-    Q_FORMAT##_t Q_FORMAT##_from_float(float value);     \
-    Q_FORMAT##_t Q_FORMAT##_from_double(double value);   \
-    float Q_FORMAT##_to_float(Q_FORMAT##_t value);       \
-    double Q_FORMAT##_to_double(Q_FORMAT##_t value);     \
-                                                         \
-    /* Trigonometric functions */                        \
-    Q_FORMAT##_t Q_FORMAT##_sin(Q_FORMAT##_t angle);     \
-    Q_FORMAT##_t Q_FORMAT##_cos(Q_FORMAT##_t angle);     \
-    Q_FORMAT##_t Q_FORMAT##_tan(Q_FORMAT##_t angle);     \
-                                                         \
-    /* Inverse trigonometric functions */                \
-    Q_FORMAT##_t Q_FORMAT##_asin(Q_FORMAT##_t value);    \
-    Q_FORMAT##_t Q_FORMAT##_acos(Q_FORMAT##_t value);    \
-    Q_FORMAT##_t Q_FORMAT##_atan(Q_FORMAT##_t value);    \
-                                                         \
-    /* Other mathematical functions */                   \
-    Q_FORMAT##_t Q_FORMAT##_sqrt(Q_FORMAT##_t value);    \
-    Q_FORMAT##_t Q_FORMAT##_inverse(Q_FORMAT##_t value); \
-    Q_FORMAT##_t Q_FORMAT##_log(Q_FORMAT##_t value);     \
+#define DECLARE_FIXED_POINT_FUNCTIONS(Q_FORMAT)                                       \
+    /* Conversion functions */                                                        \
+    Q_FORMAT##_t Q_FORMAT##_from_float(float value);                                  \
+    Q_FORMAT##_t Q_FORMAT##_from_double(double value);                                \
+    float Q_FORMAT##_to_float(Q_FORMAT##_t value);                                    \
+    double Q_FORMAT##_to_double(Q_FORMAT##_t value);                                  \
+                                                                                      \
+    /* Scaled conversion functions (for arbitrary ranges) */                          \
+    Q_FORMAT##_t Q_FORMAT##_from_float_scaled(float value, float min, float max);     \
+    Q_FORMAT##_t Q_FORMAT##_from_double_scaled(double value, double min, double max); \
+    float Q_FORMAT##_to_float_scaled(Q_FORMAT##_t value, float min, float max);       \
+    double Q_FORMAT##_to_double_scaled(Q_FORMAT##_t value, double min, double max);   \
+                                                                                      \
+    /* Trigonometric functions */                                                     \
+    Q_FORMAT##_t Q_FORMAT##_sin(Q_FORMAT##_t angle);                                  \
+    Q_FORMAT##_t Q_FORMAT##_cos(Q_FORMAT##_t angle);                                  \
+    Q_FORMAT##_t Q_FORMAT##_tan(Q_FORMAT##_t angle);                                  \
+                                                                                      \
+    /* Inverse trigonometric functions */                                             \
+    Q_FORMAT##_t Q_FORMAT##_asin(Q_FORMAT##_t value);                                 \
+    Q_FORMAT##_t Q_FORMAT##_acos(Q_FORMAT##_t value);                                 \
+    Q_FORMAT##_t Q_FORMAT##_atan(Q_FORMAT##_t value);                                 \
+                                                                                      \
+    /* Other mathematical functions */                                                \
+    Q_FORMAT##_t Q_FORMAT##_sqrt(Q_FORMAT##_t value);                                 \
+    Q_FORMAT##_t Q_FORMAT##_inverse(Q_FORMAT##_t value);                              \
+    Q_FORMAT##_t Q_FORMAT##_log(Q_FORMAT##_t value);                                  \
     Q_FORMAT##_t Q_FORMAT##_exp(Q_FORMAT##_t value);
 
 /* ========================================================================
  * Q1.6 Format Functions
  * ======================================================================== */
-DECLARE_FIXED_POINT_FUNCTIONS(q1_6)
+DECLARE_FIXED_POINT_FUNCTIONS(Q1_6)
 
 /* ========================================================================
  * Q1.14 Format Functions
  * ======================================================================== */
-DECLARE_FIXED_POINT_FUNCTIONS(q1_14)
+DECLARE_FIXED_POINT_FUNCTIONS(Q1_14)
 
 /* ========================================================================
  * Q1.30 Format Functions
  * ======================================================================== */
-DECLARE_FIXED_POINT_FUNCTIONS(q1_30)
+DECLARE_FIXED_POINT_FUNCTIONS(Q1_30)
 
 #endif /* FIXED_POINT_MATH_H */
