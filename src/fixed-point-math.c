@@ -116,9 +116,22 @@ static const Q1_30_t lut_ln2_range_Q1_30[LUT_SZ] = {
  * ======================================================================== */
 
 #define IMPLEMENT_FIXED_POINT_FUNCTIONS(Q_FORMAT, FRAC_BITS, ONE_VALUE)                                       \
+    /* Get sign bit: returns 1 if negative, 0 if positive or zero */                                          \
+    int                                                                                                       \
+    Q_FORMAT##_get_sign_bit(Q_FORMAT##_t value)                                                               \
+    {                                                                                                         \
+        return (value < 0) ? 1 : 0;                                                                           \
+    }                                                                                                         \
                                                                                                               \
+    /* Set sign bit: returns absolute value if sign=0, negated value if sign=1 */                             \
+    Q_FORMAT##_t Q_FORMAT##_set_sign_bit(Q_FORMAT##_t value, int sign)                                        \
+    {                                                                                                         \
+        Q_FORMAT##_t abs_value = (value < 0) ? -value : value;                                                \
+        return (sign != 0) ? -abs_value : abs_value;                                                          \
+    }                                                                                                         \
     /* Conversion from float */                                                                               \
-    Q_FORMAT##_t Q_FORMAT##_from_float(float value)                                                           \
+    Q_FORMAT##_t                                                                                              \
+    Q_FORMAT##_from_float(float value)                                                                        \
     {                                                                                                         \
         return (Q_FORMAT##_t)(value * (float)ONE_VALUE);                                                      \
     }                                                                                                         \
@@ -253,31 +266,70 @@ static const Q1_30_t lut_ln2_range_Q1_30[LUT_SZ] = {
                                                                                                               \
     Q_FORMAT##_t Q_FORMAT##_exp(Q_FORMAT##_t value)                                                           \
     {                                                                                                         \
-        /* Exponential function using LUT and linear interpolation */                                         \
-        typedef int64_t DOUBLE_##Q_FORMAT;                                                                    \
+        if (value == 0)                                                                                       \
+        {                                                                                                     \
+            return (Q_FORMAT##_t)ONE_VALUE;                                                                   \
+        }                                                                                                     \
+        /* Exponential function using LUT and linear interpolation - integer only */                          \
+        /* LUT range: [-ln(2), 7*ln(2)/8] approximately [-0.693, 0.607] */                                    \
+        /* Handles both positive and negative arguments with separate flows */                                \
                                                                                                               \
-        DOUBLE_##Q_FORMAT addr = ((value * Q_FORMAT##_INV_LN2_APPROX) << 3);                                  \
-        DOUBLE_##Q_FORMAT frac = addr & (((DOUBLE_##Q_FORMAT)1 << (Q_FORMAT##_FRACTIONAL_BITS + 3)) - 1);     \
-        int shift_amount = Q_FORMAT##_FRACTIONAL_BITS + 3;                                                    \
-        /*                                                                                                    \
-         * For negative addr, subtract 1 after the arithmetic right shift to get a floor-like                 \
-         * behavior instead of truncation toward zero. This ensures symmetric binning                         \
-         * of indices around zero when mapping addr into LUT entries.                                         \
-         */                                                                                                   \
-        DOUBLE_##Q_FORMAT shifted_addr = (addr >= 0) ? (addr >> shift_amount) : ((addr >> shift_amount) - 1); \
-        Q_FORMAT##_t index = HALF_LUT_SZ + (Q_FORMAT##_t)shifted_addr;                                        \
-        if (index > LUT_SZ - 2)                                                                               \
-            index = LUT_SZ - 2;                                                                               \
+        /* Scale input value by INV_LN2: addr = value * (1/ln(2)) * 2^3 */                                    \
+        int64_t scaled = ((int64_t)value *                                                                    \
+                          Q_FORMAT##_INV_LN2_APPROX)                                                          \
+                         << 3;                                                                                \
+                                                                                                              \
+        /* Extract fractional part for linear interpolation (lower bits) */                                   \
+        DOUBLE_##Q_FORMAT##_t frac = (DOUBLE_##Q_FORMAT##_t)(scaled & (DOUBLE_##Q_FORMAT##_FRACTIONAL_MASK)); \
+                                                                                                              \
+        int8_t index;                                                                                         \
+                                                                                                              \
+        /* ============================================================= */                                   \
+        /* FLOW FOR POSITIVE ARGUMENTS */                                                                     \
+        /* ============================================================= */                                   \
+        if (value >= 0)                                                                                       \
+        {                                                                                                     \
+            /* For positive values: direct right-shift for integer part */                                    \
+            int8_t addr_int = scaled >> (DOUBLE_##Q_FORMAT##_FRACTIONAL_BITS);                                \
+            /* Map to LUT centered at 8 (middle of 16-element LUT) */                                         \
+            index = 8 + (int8_t)addr_int;                                                                     \
+        }                                                                                                     \
+        /* ============================================================= */                                   \
+        /* FLOW FOR NEGATIVE ARGUMENTS */                                                                     \
+        /* ============================================================= */                                   \
+        else                                                                                                  \
+        {                                                                                                     \
+            /* For negative values: floor behavior (round toward -infinity) */                                \
+            /* This ensures symmetric binning of indices around zero */                                       \
+            frac = frac + DOUBLE_##Q_FORMAT##_ONE;                                                            \
+            int8_t addr_int = (scaled - DOUBLE_##Q_FORMAT##_ONE) >> (DOUBLE_##Q_FORMAT##_FRACTIONAL_BITS);    \
+            /* Map to LUT centered at 8 (middle of 16-element LUT) */                                         \
+            index = 8 + (int8_t)addr_int;                                                                     \
+        }                                                                                                     \
+                                                                                                              \
+        /* Clamp index to valid LUT range [0, 15] to prevent out-of-bounds access */                          \
+        if (index > 14)                                                                                       \
+            index = 14;                                                                                       \
         else if (index < 0)                                                                                   \
             index = 0;                                                                                        \
                                                                                                               \
-        DOUBLE_##Q_FORMAT delta =                                                                             \
-            (DOUBLE_##Q_FORMAT)(lut_ln2_range_##Q_FORMAT[index + 1] -                                         \
-                                lut_ln2_range_##Q_FORMAT[index]) *                                            \
-            frac;                                                                                             \
-        DOUBLE_##Q_FORMAT interpolated = (DOUBLE_##Q_FORMAT)lut_ln2_range_##Q_FORMAT[index] +                 \
-                                         (delta >> Q_FORMAT##_FRACTIONAL_BITS);                               \
-        return (Q_FORMAT##_t)interpolated;                                                                    \
+        /* ============================================================= */                                   \
+        /* LINEAR INTERPOLATION (works for both positive/negative) */                                         \
+        /* ============================================================= */                                   \
+        /* Get LUT values at current and next index */                                                        \
+        Q_FORMAT##_t y0 = (Q_FORMAT##_t)lut_ln2_range_##Q_FORMAT[index];                                      \
+        Q_FORMAT##_t y1 = (Q_FORMAT##_t)lut_ln2_range_##Q_FORMAT[index + 1];                                  \
+                                                                                                              \
+        /* Compute slope: dy = y1 - y0 */                                                                     \
+        Q_FORMAT##_t dy = y1 - y0;                                                                            \
+                                                                                                              \
+        /* Scale interpolation by fractional part: delta = dy * frac / 2^(FRAC_BITS+3) */                     \
+        DOUBLE_##Q_FORMAT##_t delta = ((DOUBLE_##Q_FORMAT##_t)(dy * frac)) >> (Q_FORMAT##_FRACTIONAL_BITS);   \
+                                                                                                              \
+        /* Final result: y = y0 + delta */                                                                    \
+        Q_FORMAT##_t result = (Q_FORMAT##_t)(y0 + delta);                                                     \
+                                                                                                              \
+        return (Q_FORMAT##_t)result;                                                                          \
     }
 
 /* ========================================================================

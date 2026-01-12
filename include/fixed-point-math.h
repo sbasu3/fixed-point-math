@@ -15,6 +15,10 @@
  * ======================================================================== */
 
 #define DECLARE_FIXED_POINT_FUNCTIONS(Q_FORMAT)                                       \
+    /* Sign bit manipulation functions */                                             \
+    int Q_FORMAT##_get_sign_bit(Q_FORMAT##_t value);                                  \
+    Q_FORMAT##_t Q_FORMAT##_set_sign_bit(Q_FORMAT##_t value, int sign);               \
+                                                                                      \
     /* Conversion functions */                                                        \
     Q_FORMAT##_t Q_FORMAT##_from_float(float value);                                  \
     Q_FORMAT##_t Q_FORMAT##_from_double(double value);                                \
@@ -46,16 +50,16 @@
 /* ========================================================================
  * Q1.6 Format Functions
  * ======================================================================== */
-DECLARE_FIXED_POINT_FUNCTIONS(Q1_6)
+// DECLARE_FIXED_POINT_FUNCTIONS(Q1_6)
 
 /* ========================================================================
  * Q1.14 Format Functions
  * ======================================================================== */
-DECLARE_FIXED_POINT_FUNCTIONS(Q1_14)
+// DECLARE_FIXED_POINT_FUNCTIONS(Q1_14)
 
 /* ========================================================================
  * Q1.30 Format Functions
  * ======================================================================== */
-DECLARE_FIXED_POINT_FUNCTIONS(Q1_30)
+// DECLARE_FIXED_POINT_FUNCTIONS(Q1_30)
 
 #endif /* FIXED_POINT_MATH_H */

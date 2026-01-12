@@ -63,6 +63,16 @@ test: tests
 	done
 	@echo "All tests completed."
 
+# Build and run addition tests
+.PHONY: test_add
+test_add: $(LIBRARY) $(BIN_DIR)/test_q1_6_add $(BIN_DIR)/test_q_add_all $(BIN_DIR)/test_q_arith_ops
+	@echo "Running test_q1_6_add..."
+	$(BIN_DIR)/test_q1_6_add
+	@echo "Running test_q_add_all..."
+	$(BIN_DIR)/test_q_add_all
+	@echo "Running test_q_arith_ops..."
+	$(BIN_DIR)/test_q_arith_ops
+
 # Clean build artifacts
 .PHONY: clean
 clean:

@@ -2,6 +2,7 @@
 #define DEFINES_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define FIXED_POINT_MATH_VERSION_MAJOR 1
 #define FIXED_POINT_MATH_VERSION_MINOR 0
@@ -19,12 +20,21 @@
  */
 
 /* Q1.6 format: 1 sign bit, 1 integer bit, 6 fractional bits (8-bit total) */
-typedef int8_t Q1_6_t;
-typedef int16_t DOUBLE_Q1_6_t; /* For intermediate calculations */
+typedef struct
+{
+    uint8_t sign : 1;
+    uint8_t integer : 1;
+    uint8_t fractional : 6;
+} Q1_6_t;
+typedef struct
+{
+    uint16_t sign : 1;
+    uint16_t integer : 1;
+    uint16_t fractional : 12;
+} DOUBLE_Q1_6_t; /* For intermediate calculations */
 #define Q1_6_FRACTIONAL_BITS 6
 #define DOUBLE_Q1_6_FRACTIONAL_BITS (2 * Q1_6_FRACTIONAL_BITS)
-#define Q1_6_FRACTIONAL_MASK ((1 << Q1_6_FRACTIONAL_BITS) - 1)
-#define DOUBLE_Q1_6_FRACTIONAL_MASK ((1 << DOUBLE_Q1_6_FRACTIONAL_BITS) - 1)
+
 #define Q1_6_ONE (1 << Q1_6_FRACTIONAL_BITS)
 #define DOUBLE_Q1_6_ONE (1 << DOUBLE_Q1_6_FRACTIONAL_BITS)
 #define Q1_6_MAX_VALUE ((1 << (1 + 6)) - 1)            /* 0b01111111 = 127 */
@@ -35,10 +45,21 @@ typedef int16_t DOUBLE_Q1_6_t; /* For intermediate calculations */
 #define DOUBLE_Q1_6_EPSILON (1.0f / (1 << DOUBLE_Q1_6_FRACTIONAL_BITS))
 #define Q1_6_LN2_APPROX (Q1_6_t)(LN2_APPROX * Q1_6_ONE)
 #define Q1_6_INV_LN2_APPROX (Q1_6_t)(INV_LN2_APPROX * Q1_6_ONE)
+#define Q1_6_HALF (Q1_6_t)(0.5f * Q1_6_ONE)
 
 /* Q1.14 format: 1 sign bit, 1 integer bit, 14 fractional bits (16-bit total) */
-typedef int16_t Q1_14_t;
-typedef int32_t DOUBLE_Q1_14_t; /* For intermediate calculations */
+typedef struct
+{
+    uint16_t sign : 1;
+    uint16_t integer : 1;
+    uint16_t fractional : 14;
+} Q1_14_t;
+typedef struct
+{
+    uint32_t sign : 1;
+    uint32_t integer : 1;
+    uint32_t fractional : 28;
+} DOUBLE_Q1_14_t; /* For intermediate calculations */
 #define Q1_14_FRACTIONAL_BITS 14
 #define DOUBLE_Q1_14_FRACTIONAL_BITS (2 * Q1_14_FRACTIONAL_BITS)
 #define Q1_14_FRACTIONAL_MASK ((1 << Q1_14_FRACTIONAL_BITS) - 1)
@@ -53,10 +74,21 @@ typedef int32_t DOUBLE_Q1_14_t; /* For intermediate calculations */
 #define DOUBLE_Q1_14_EPSILON (1.0f / (1 << DOUBLE_Q1_14_FRACTIONAL_BITS))
 #define Q1_14_LN2_APPROX (Q1_14_t)(LN2_APPROX * Q1_14_ONE)
 #define Q1_14_INV_LN2_APPROX (Q1_14_t)(INV_LN2_APPROX * Q1_14_ONE)
+#define Q1_14_HALF (Q1_14_t)(0.5f * Q1_14_ONE)
 
 /* Q1.30 format: 1 sign bit, 1 integer bit, 30 fractional bits (32-bit total) */
-typedef int32_t Q1_30_t;
-typedef int64_t DOUBLE_Q1_30_t; /* Alias for Q1.30 format */
+typedef struct
+{
+    uint32_t sign : 1;
+    uint32_t integer : 1;
+    uint32_t fractional : 30;
+} Q1_30_t;
+typedef struct
+{
+    uint64_t sign : 1;
+    uint64_t integer : 1;
+    uint64_t fractional : 62;
+} DOUBLE_Q1_30_t; /* Alias for Q1.30 format */
 #define Q1_30_FRACTIONAL_BITS 30
 #define DOUBLE_Q1_30_FRACTIONAL_BITS (2 * Q1_30_FRACTIONAL_BITS)
 #define Q1_30_FRACTIONAL_MASK ((1 << Q1_30_FRACTIONAL_BITS) - 1)
@@ -71,5 +103,5 @@ typedef int64_t DOUBLE_Q1_30_t; /* Alias for Q1.30 format */
 #define DOUBLE_Q1_30_EPSILON (1.0f / (1LL << DOUBLE_Q1_30_FRACTIONAL_BITS))
 #define Q1_30_LN2_APPROX (Q1_30_t)(LN2_APPROX * Q1_30_ONE)
 #define Q1_30_INV_LN2_APPROX (Q1_30_t)(INV_LN2_APPROX * Q1_30_ONE)
-
+#define Q1_30_HALF (Q1_30_t)(0.5f * Q1_30_ONE)
 #endif /* DEFINES_H */

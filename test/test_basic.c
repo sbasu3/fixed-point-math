@@ -2,6 +2,7 @@
 #include <inttypes.h>
 #include <math.h>
 #include "fixed-point-math.h"
+#include "utilities.h"
 
 /*
  * Basic test file to verify the library structure
@@ -259,6 +260,58 @@ int main(void)
 
     /* Test scaled conversion functions */
     test_scaled_conversions();
+
+    /* Test Q1.6 addition utility */
+    {
+        printf("\nTesting Q1.6 add utility:\n");
+        printf("-------------------------\n");
+        /* Helper lambda-like macros to build Q1_6 values */
+        Q1_6_t a, b, r;
+
+        /* Case 1: 0.50 + 0.25 = 0.75 */
+        a.sign = 0;
+        a.integer = 0;
+        a.fractional = 32; /* 0.50 -> 32/64 */
+        b.sign = 0;
+        b.integer = 0;
+        b.fractional = 16; /* 0.25 -> 16/64 */
+        r = Q1_6_add(a, b);
+        printf("  0.50 + 0.25 => sign=%u, int=%u, frac=%u (expect 0,0,48)\n",
+               (unsigned)r.sign, (unsigned)r.integer, (unsigned)r.fractional);
+
+        /* Case 2: 1.00 + 0.50 => clamp integer to 1 (overflow) */
+        a.sign = 0;
+        a.integer = 1;
+        a.fractional = 0; /* 1.00 */
+        b.sign = 0;
+        b.integer = 0;
+        b.fractional = 32; /* 0.50 */
+        r = Q1_6_add(a, b);
+        printf("  1.00 + 0.50 => sign=%u, int=%u, frac=%u (clamped int<=1)\n",
+               (unsigned)r.sign, (unsigned)r.integer, (unsigned)r.fractional);
+
+        /* Case 3: -0.75 + 0.50 = -0.25 */
+        a.sign = 1;
+        a.integer = 0;
+        a.fractional = 48; /* -0.75 */
+        b.sign = 0;
+        b.integer = 0;
+        b.fractional = 32; /* 0.50 */
+        r = Q1_6_add(a, b);
+        printf("  -0.75 + 0.50 => sign=%u, int=%u, frac=%u (expect 1,0,16)\n",
+               (unsigned)r.sign, (unsigned)r.integer, (unsigned)r.fractional);
+
+        /* Case 4: -0.25 + -0.50 = -0.75 */
+        a.sign = 1;
+        a.integer = 0;
+        a.fractional = 16; /* -0.25 */
+        b.sign = 1;
+        b.integer = 0;
+        b.fractional = 32; /* -0.50 */
+        r = Q1_6_add(a, b);
+        printf("  -0.25 + -0.50 => sign=%u, int=%u, frac=%u (expect 1,0,48)\n",
+               (unsigned)r.sign, (unsigned)r.integer, (unsigned)r.fractional);
+    }
 
     /* Test exponential functions */
     test_exp_functions();
