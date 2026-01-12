@@ -2,7 +2,7 @@
 #define DEFINES_H
 
 #include <stdint.h>
-#include <stdbool.h>
+// #include <stdbool.h>
 
 #define FIXED_POINT_MATH_VERSION_MAJOR 1
 #define FIXED_POINT_MATH_VERSION_MINOR 0
@@ -10,98 +10,34 @@
 #define LN2_APPROX 0.6931471805599453
 #define INV_LN2_APPROX 1.4426950408889634
 
-#define CONCAT(a, b) a##b
-#define STRINGIFY(x) #x
-
 /*
  * Fixed-Point Format Definitions
  * Q format: Qm.n where m = integer bits, n = fractional bits
  * Total bits = m + n + 1 (sign bit)
  */
 
-/* Q1.6 format: 1 sign bit, 1 integer bit, 6 fractional bits (8-bit total) */
-typedef struct
-{
-    uint8_t sign : 1;
-    uint8_t integer : 1;
-    uint8_t fractional : 6;
-} Q1_6_t;
-typedef struct
-{
-    uint16_t sign : 1;
-    uint16_t integer : 1;
-    uint16_t fractional : 12;
-} DOUBLE_Q1_6_t; /* For intermediate calculations */
-#define Q1_6_FRACTIONAL_BITS 6
-#define DOUBLE_Q1_6_FRACTIONAL_BITS (2 * Q1_6_FRACTIONAL_BITS)
+/* Q1.14 or fp16 format*/
 
-#define Q1_6_ONE (1 << Q1_6_FRACTIONAL_BITS)
-#define DOUBLE_Q1_6_ONE (1 << DOUBLE_Q1_6_FRACTIONAL_BITS)
-#define Q1_6_MAX_VALUE ((1 << (1 + 6)) - 1)            /* 0b01111111 = 127 */
-#define DOUBLE_Q1_6_MAX_VALUE ((1 << (1 + 2 * 6)) - 1) /* 0b011111111111111 = 16383 */
-#define Q1_6_MIN_VALUE (-(1 << (1 + 6)))               /* 0b10000000 = -128 */
-#define DOUBLE_Q1_6_MIN_VALUE (-(1 << (1 + 2 * 6)))    /* 0b100000000000000 = -16384 */
-#define Q1_6_EPSILON (1.0f / (1 << Q1_6_FRACTIONAL_BITS))
-#define DOUBLE_Q1_6_EPSILON (1.0f / (1 << DOUBLE_Q1_6_FRACTIONAL_BITS))
-#define Q1_6_LN2_APPROX (Q1_6_t)(LN2_APPROX * Q1_6_ONE)
-#define Q1_6_INV_LN2_APPROX (Q1_6_t)(INV_LN2_APPROX * Q1_6_ONE)
-#define Q1_6_HALF (Q1_6_t)(0.5f * Q1_6_ONE)
+typedef int16_t fp16_t;
+#define FP16_FRACTIONAL_BITS 14
+#define FP16_INTEGER_BITS 1
+#define FP16_TOTAL_BITS (1 + FP16_INTEGER_BITS + FP16_FRACTIONAL_BITS)
+#define FP16_FRACTIONAL_MASK ((1u << FP16_FRACTIONAL_BITS) - 1u)
+#define FP16_ONE_VALUE (1 << FP16_FRACTIONAL_BITS)
+#define FP16_MAX_VALUE ((1 << (FP16_INTEGER_BITS + FP16_FRACTIONAL_BITS)) - 1)
+#define FP16_MIN_VALUE (-(1 << (FP16_INTEGER_BITS + FP16_FRACTIONAL_BITS)))
+#define FP16_INV_LN2_APPROX 23637 /* Approximation of (1/ln(2)) * 2^14 */
+#define FP16_LN2_APPROX 11356     /* Approximation of ln(2) * 2^14 */
 
-/* Q1.14 format: 1 sign bit, 1 integer bit, 14 fractional bits (16-bit total) */
-typedef struct
-{
-    uint16_t sign : 1;
-    uint16_t integer : 1;
-    uint16_t fractional : 14;
-} Q1_14_t;
-typedef struct
-{
-    uint32_t sign : 1;
-    uint32_t integer : 1;
-    uint32_t fractional : 28;
-} DOUBLE_Q1_14_t; /* For intermediate calculations */
-#define Q1_14_FRACTIONAL_BITS 14
-#define DOUBLE_Q1_14_FRACTIONAL_BITS (2 * Q1_14_FRACTIONAL_BITS)
-#define Q1_14_FRACTIONAL_MASK ((1 << Q1_14_FRACTIONAL_BITS) - 1)
-#define DOUBLE_Q1_14_FRACTIONAL_MASK ((1 << DOUBLE_Q1_14_FRACTIONAL_BITS) - 1)
-#define Q1_14_ONE (1 << Q1_14_FRACTIONAL_BITS)
-#define DOUBLE_Q1_14_ONE (1 << DOUBLE_Q1_14_FRACTIONAL_BITS)
-#define Q1_14_MAX_VALUE ((1 << (1 + 14)) - 1)            /* 0b0111111111111111 = 32767 */
-#define DOUBLE_Q1_14_MAX_VALUE ((1 << (1 + 2 * 14)) - 1) /* 0b01111111111111111111111111111111 = 1073741823 */
-#define Q1_14_MIN_VALUE (-(1 << (1 + 14)))               /* 0b1000000000000000 = -32768 */
-#define DOUBLE_Q1_14_MIN_VALUE (-(1 << (1 + 2 * 14)))    /* 0b10000000000000000000000000000000 = -1073741824 */
-#define Q1_14_EPSILON (1.0f / (1 << Q1_14_FRACTIONAL_BITS))
-#define DOUBLE_Q1_14_EPSILON (1.0f / (1 << DOUBLE_Q1_14_FRACTIONAL_BITS))
-#define Q1_14_LN2_APPROX (Q1_14_t)(LN2_APPROX * Q1_14_ONE)
-#define Q1_14_INV_LN2_APPROX (Q1_14_t)(INV_LN2_APPROX * Q1_14_ONE)
-#define Q1_14_HALF (Q1_14_t)(0.5f * Q1_14_ONE)
-
-/* Q1.30 format: 1 sign bit, 1 integer bit, 30 fractional bits (32-bit total) */
-typedef struct
-{
-    uint32_t sign : 1;
-    uint32_t integer : 1;
-    uint32_t fractional : 30;
-} Q1_30_t;
-typedef struct
-{
-    uint64_t sign : 1;
-    uint64_t integer : 1;
-    uint64_t fractional : 62;
-} DOUBLE_Q1_30_t; /* Alias for Q1.30 format */
-#define Q1_30_FRACTIONAL_BITS 30
-#define DOUBLE_Q1_30_FRACTIONAL_BITS (2 * Q1_30_FRACTIONAL_BITS)
-#define Q1_30_FRACTIONAL_MASK ((1 << Q1_30_FRACTIONAL_BITS) - 1)
-#define DOUBLE_Q1_30_FRACTIONAL_MASK ((1LL << DOUBLE_Q1_30_FRACTIONAL_BITS) - 1)
-#define Q1_30_ONE (1 << Q1_30_FRACTIONAL_BITS)
-#define DOUBLE_Q1_30_ONE (1LL << DOUBLE_Q1_30_FRACTIONAL_BITS)
-#define Q1_30_MAX_VALUE ((1LL << (1 + 30)) - 1) /* 0b01111111111111111111111111111111 = 1073741823 */
-#define DOUBLE_Q1_30_MAX_VALUE ((1LL << (1 + 2 * 30)) - 1)
-#define Q1_30_MIN_VALUE (-(1LL << (1 + 30)))
-#define DOUBLE_Q1_30_MIN_VALUE (-(1LL << (1 + 2 * 30)))
-#define Q1_30_EPSILON (1.0f / (1 << Q1_30_FRACTIONAL_BITS))
-#define DOUBLE_Q1_30_EPSILON (1.0f / (1LL << DOUBLE_Q1_30_FRACTIONAL_BITS))
-#define Q1_30_LN2_APPROX (Q1_30_t)(LN2_APPROX * Q1_30_ONE)
-#define Q1_30_INV_LN2_APPROX (Q1_30_t)(INV_LN2_APPROX * Q1_30_ONE)
-#define Q1_30_HALF (Q1_30_t)(0.5f * Q1_30_ONE)
-#endif /* DEFINES_H */
+/* Q1.30 or fp32 format */
+typedef int32_t fp32_t;
+#define FP32_FRACTIONAL_BITS 30
+#define FP32_INTEGER_BITS 1
+#define FP32_TOTAL_BITS (1 + FP32_INTEGER_BITS + FP32_FRACTIONAL_BITS)
+#define FP32_FRACTIONAL_MASK ((1u << FP32_FRACTIONAL_BITS) - 1u)
+#define FP32_ONE_VALUE (1 << FP32_FRACTIONAL_BITS)
+#define FP32_MAX_VALUE ((1 << (FP32_INTEGER_BITS + FP32_FRACTIONAL_BITS)) - 1)
+#define FP32_MIN_VALUE (-(1 << (FP32_INTEGER_BITS + FP32_FRACTIONAL_BITS)))
+#define FP32_INV_LN2_APPROX 1547425049 /* Approximation of (1/ln(2)) * 2^30 */
+#define FP32_LN2_APPROX 742487         // Approximation of ln(2) * 2^30
+#endif                                 /* DEFINES_H */

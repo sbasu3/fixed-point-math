@@ -73,6 +73,18 @@ test_add: $(LIBRARY) $(BIN_DIR)/test_q1_6_add $(BIN_DIR)/test_q_add_all $(BIN_DI
 	@echo "Running test_q_arith_ops..."
 	$(BIN_DIR)/test_q_arith_ops
 
+# Build and run util conversion tests
+.PHONY: test_util
+test_util: $(LIBRARY) $(BIN_DIR)/test_util_conversions
+	@echo "Running util conversion tests..."
+	$(BIN_DIR)/test_util_conversions
+
+# Build and run fp16_exp tests
+.PHONY: test_exp
+test_exp: $(LIBRARY) $(BIN_DIR)/test_fp16_exp
+	@echo "Running fp16_exp tests..."
+	$(BIN_DIR)/test_fp16_exp
+
 # Clean build artifacts
 .PHONY: clean
 clean:
@@ -99,11 +111,13 @@ uninstall:
 # Help target
 .PHONY: help
 help:
-	@echo "Fixed-Point Math Library Makefile"
+	@echo "Fitest_exp  - Build and run fp16_exp tests"
+	@echo "  xed-Point Math Library Makefile"
 	@echo "Available targets:"
 	@echo "  all       - Build the library (default)"
 	@echo "  tests     - Build test executables"
 	@echo "  test      - Build and run tests"
+	@echo "  test_util - Build and run util conversion tests"
 	@echo "  clean     - Remove build artifacts"
 	@echo "  install   - Install library and headers to /usr/local"
 	@echo "  uninstall - Remove installed library and headers"
