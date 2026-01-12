@@ -50,7 +50,7 @@ tests: $(LIBRARY) $(TEST_BINARIES)
 
 # Compile test executables
 $(BIN_DIR)/%: $(TEST_DIR)/%.c $(LIBRARY) | $(BIN_DIR)
-	$(CC) $(CFLAGS) $(INCLUDES) $< $(LIBRARY) -o $@
+	$(CC) $(CFLAGS) $(INCLUDES) $< $(LIBRARY) -o $@ -lm
 	@echo "Test binary created: $@"
 
 # Run tests
@@ -62,6 +62,16 @@ test: tests
 		$$test || exit 1; \
 	done
 	@echo "All tests completed."
+
+# Build and run addition tests
+.PHONY: test_add
+test_add: $(LIBRARY) $(BIN_DIR)/test_q1_6_add $(BIN_DIR)/test_q_add_all $(BIN_DIR)/test_q_arith_ops
+	@echo "Running test_q1_6_add..."
+	$(BIN_DIR)/test_q1_6_add
+	@echo "Running test_q_add_all..."
+	$(BIN_DIR)/test_q_add_all
+	@echo "Running test_q_arith_ops..."
+	$(BIN_DIR)/test_q_arith_ops
 
 # Clean build artifacts
 .PHONY: clean
