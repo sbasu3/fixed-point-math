@@ -85,6 +85,48 @@ test_exp: $(LIBRARY) $(BIN_DIR)/test_fp16_exp
 	@echo "Running fp16_exp tests..."
 	$(BIN_DIR)/test_fp16_exp
 
+# Build and run fp16_poly_exp tests
+.PHONY: test_poly_exp
+test_poly_exp: $(LIBRARY) $(BIN_DIR)/test_fp16_poly_exp
+	@echo "Running fp16_poly_exp tests..."
+	$(BIN_DIR)/test_fp16_poly_exp
+
+# Build and run fp16_ln tests
+.PHONY: test_ln
+test_ln: $(LIBRARY) $(BIN_DIR)/test_fp16_ln
+	@echo "Running fp16_ln tests..."
+	$(BIN_DIR)/test_fp16_ln
+
+# Build and run fp16_ln range tests (restricted to -0.5 to 0.5)
+.PHONY: test_ln_range
+test_ln_range: $(LIBRARY) $(BIN_DIR)/test_fp16_ln_range
+	@echo "Running fp16_ln range tests (-0.5 to 0.5)..."
+	$(BIN_DIR)/test_fp16_ln_range
+
+# Build rule for test_fp16_ln_range
+$(BIN_DIR)/test_fp16_ln_range: $(TEST_DIR)/test_fp16_ln_range.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(LIBRARY) -lm
+
+# Build and run fp16_inverse tests
+.PHONY: test_inverse
+test_inverse: $(LIBRARY) $(BIN_DIR)/test_fp16_inverse
+	@echo "Running fp16_inverse tests..."
+	$(BIN_DIR)/test_fp16_inverse
+
+# Build rule for test_fp16_inverse
+$(BIN_DIR)/test_fp16_inverse: $(TEST_DIR)/test_fp16_inverse.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(LIBRARY) -lm
+
+# Build and run fp16_sqrt tests
+.PHONY: test_sqrt
+test_sqrt: $(LIBRARY) $(BIN_DIR)/test_fp16_sqrt
+	@echo "Running fp16_sqrt tests..."
+	$(BIN_DIR)/test_fp16_sqrt
+
+# Build rule for test_fp16_sqrt
+$(BIN_DIR)/test_fp16_sqrt: $(TEST_DIR)/test_fp16_sqrt.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(LIBRARY) -lm
+
 # Clean build artifacts
 .PHONY: clean
 clean:
@@ -111,14 +153,15 @@ uninstall:
 # Help target
 .PHONY: help
 help:
-	@echo "Fitest_exp  - Build and run fp16_exp tests"
-	@echo "  xed-Point Math Library Makefile"
+	@echo "Fixed-Point Math Library Makefile"
 	@echo "Available targets:"
-	@echo "  all       - Build the library (default)"
-	@echo "  tests     - Build test executables"
-	@echo "  test      - Build and run tests"
-	@echo "  test_util - Build and run util conversion tests"
-	@echo "  clean     - Remove build artifacts"
-	@echo "  install   - Install library and headers to /usr/local"
-	@echo "  uninstall - Remove installed library and headers"
-	@echo "  help      - Show this help message"
+	@echo "  all          - Build the library (default)"
+	@echo "  tests        - Build test executables"
+	@echo "  test         - Build and run tests"
+	@echo "  test_util    - Build and run util conversion tests"
+	@echo "  test_exp     - Build and run fp16_exp tests"
+	@echo "  test_poly_exp - Build and run fp16_poly_exp tests"
+	@echo "  clean        - Remove build artifacts"
+	@echo "  install      - Install library and headers to /usr/local"
+	@echo "  uninstall    - Remove installed library and headers"
+	@echo "  help         - Show this help message"
