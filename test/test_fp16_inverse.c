@@ -340,16 +340,16 @@ int main(void)
     double total_calls = (double)BENCHMARK_ITERATIONS * NUM_TEST_VALUES;
     double elapsed_seconds = (double)(end_time - start_time) / CLOCKS_PER_SEC;
     double calls_per_second = total_calls / elapsed_seconds;
-    double microseconds_per_call = (elapsed_seconds * 1e6) / total_calls;
+    double nanoseconds_per_call = (elapsed_seconds * 1e9) / total_calls;
 
     printf("Total function calls: %.0f\n", total_calls);
     printf("Elapsed time: %.6f seconds\n", elapsed_seconds);
     printf("Throughput: %.0f calls/sec\n", calls_per_second);
-    printf("Per-call latency: %.2f microseconds\n\n", microseconds_per_call);
+    printf("Per-call latency: %.2f nanoseconds\n\n", nanoseconds_per_call);
 
     /* Per-value benchmark */
     printf("Per-value latency breakdown:\n");
-    printf("Input Value |  1/x Value |  Latency (μs)\n");
+    printf("Input Value |  1/x Value |  Latency (ns)\n");
     printf("------------|------------|---------------\n");
 
     for (int i = 0; i < NUM_TEST_VALUES; i++)
@@ -362,7 +362,7 @@ int main(void)
         clock_t val_end = clock();
 
         double val_elapsed = (double)(val_end - val_start) / CLOCKS_PER_SEC;
-        double val_latency = (val_elapsed * 1e6) / BENCHMARK_ITERATIONS;
+        double val_latency = (val_elapsed * 1e9) / BENCHMARK_ITERATIONS;
         double result_val = 1.0 / test_values[i];
 
         printf("   %7.2f  |   %7.2f  |   %.3f\n",

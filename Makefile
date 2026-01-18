@@ -127,6 +127,16 @@ test_sqrt: $(LIBRARY) $(BIN_DIR)/test_fp16_sqrt
 $(BIN_DIR)/test_fp16_sqrt: $(TEST_DIR)/test_fp16_sqrt.c $(LIBRARY) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(LIBRARY) -lm
 
+# Build and run fp16_wrapper tests
+.PHONY: test_wrapper
+test_wrapper: $(LIBRARY) $(BIN_DIR)/test_fp16_wrapper
+	@echo "Running fp16_wrapper tests..."
+	$(BIN_DIR)/test_fp16_wrapper
+
+# Build rule for test_fp16_wrapper
+$(BIN_DIR)/test_fp16_wrapper: $(TEST_DIR)/test_fp16_wrapper.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(LIBRARY) -lm
+
 # Clean build artifacts
 .PHONY: clean
 clean:
