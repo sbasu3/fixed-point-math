@@ -9,6 +9,8 @@
 
 #define LN2_APPROX 0.6931471805599453
 #define INV_LN2_APPROX 1.4426950408889634
+#define PI_APPROX 3.141592653589793
+#define HALF_PI_APPROX 1.5707963267948966
 
 /*
  * Fixed-Point Format Definitions
@@ -39,5 +41,14 @@ typedef int32_t fp32_t;
 #define FP32_MAX_VALUE ((1 << (FP32_INTEGER_BITS + FP32_FRACTIONAL_BITS)) - 1)
 #define FP32_MIN_VALUE (-(1 << (FP32_INTEGER_BITS + FP32_FRACTIONAL_BITS)))
 #define FP32_INV_LN2_APPROX 1547425049 /* Approximation of (1/ln(2)) * 2^30 */
-#define FP32_LN2_APPROX 742487         // Approximation of ln(2) * 2^30
-#endif                                 /* DEFINES_H */
+#define FP32_LN2_APPROX 742487         /* Approximation of ln(2) * 2^30 */
+
+/* CORDIC constants for Q1.14 format */
+#define FP16_CORDIC_ITERATIONS 14
+/* Gain compensation: A = prod(i=0..13) cos(atan(2^-i)) ≈ 0.607252937
+ * round(0.607252937 × 2^14) = 9949 */
+#define FP16_CORDIC_GAIN 9949
+/* pi/2 in Q1.14: round((pi/2) × 2^14) = 25736 */
+#define FP16_HALF_PI 25736
+
+#endif /* DEFINES_H */

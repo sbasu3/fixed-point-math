@@ -33,4 +33,16 @@ fp16_t fp16_inverse(fp16_t x);
 // Input: x in Q1.14 format (fp16_t), x >= 0
 // Output: sqrt(x) in Q1.14 format (fp16_t)
 fp16_t fp16_sqrt(fp16_t x);
+// Sine Function using CORDIC algorithm
+// Input: angle in Q1.14 radians, range [-pi/2, pi/2]
+// Output: sin(angle) in Q1.14 format (fp16_t), range [-1, 1]
+fp16_t fp16_sin(fp16_t angle);
+// Cosine Function using CORDIC algorithm
+// Input: angle in Q1.14 radians, range [-pi/2, pi/2]
+// Output: cos(angle) in Q1.14 format (fp16_t), range [-1, 1]
+fp16_t fp16_cos(fp16_t angle);
+// Arctangent Function using CORDIC vectoring mode
+// Input: y and x in Q1.14 format; x must be > 0
+// Output: atan2(y, x) in Q1.14 radians, range [-pi/2, pi/2]
+fp16_t fp16_atan2(fp16_t y, fp16_t x);
 #endif /* FIXED_POINT_MATH_H */

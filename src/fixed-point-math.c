@@ -183,4 +183,130 @@ fp16_t fp16_sqrt(fp16_t x)
         guess = (fp32_t)FP16_MAX_VALUE;
     return (fp16_t)guess;
 }
+
+/* ========================================================================
+ * CORDIC Functions
+ * ======================================================================== */
+
+/* CORDIC arctangent lookup table in Q1.14 format
+ * atan_lut[i] = round(atan(2^-i) × 2^14) for i = 0..13 */
+static const int16_t fp16_cordic_atan_lut[FP16_CORDIC_ITERATIONS] = {
+    12868, /* i=0:  atan(1)      = 0.785398 rad */
+    7596,  /* i=1:  atan(2^-1)  = 0.463648 rad */
+    4014,  /* i=2:  atan(2^-2)  = 0.244979 rad */
+    2037,  /* i=3:  atan(2^-3)  = 0.124355 rad */
+    1023,  /* i=4:  atan(2^-4)  = 0.062419 rad */
+    512,   /* i=5:  atan(2^-5)  = 0.031240 rad */
+    256,   /* i=6:  atan(2^-6)  = 0.015624 rad */
+    128,   /* i=7:  atan(2^-7)  = 0.007812 rad */
+    64,    /* i=8:  atan(2^-8)  = 0.003906 rad */
+    32,    /* i=9:  atan(2^-9)  = 0.001953 rad */
+    16,    /* i=10: atan(2^-10) = 0.000977 rad */
+    8,     /* i=11: atan(2^-11) = 0.000488 rad */
+    4,     /* i=12: atan(2^-12) = 0.000244 rad */
+    2      /* i=13: atan(2^-13) = 0.000122 rad */
+};
+
+/* Internal CORDIC rotation helper
+ * Rotates the initial vector (A, 0) by angle z using the CORDIC algorithm.
+ * A = FP16_CORDIC_GAIN compensates for the CORDIC amplification factor K,
+ * so that |output| == 1 when the input angle is valid.
+ * Input: angle in Q1.14 radians, range [-pi/2, pi/2]
+ * Output: cos_out = cos(angle), sin_out = sin(angle), both in Q1.14 */
+static void fp16_cordic_rotate(fp16_t angle, fp16_t *cos_out, fp16_t *sin_out)
+{
+    int32_t x = (int32_t)FP16_CORDIC_GAIN; /* pre-scaled by 1/K */
+    int32_t y = 0;
+    int32_t z = (int32_t)angle;
+    int i;
+
+    for (i = 0; i < FP16_CORDIC_ITERATIONS; i++)
+    {
+        int32_t d = (z >= 0) ? 1 : -1;
+        int32_t x_new = x - d * (y >> i);
+        int32_t y_new = y + d * (x >> i);
+        int32_t z_new = z - d * (int32_t)fp16_cordic_atan_lut[i];
+        x = x_new;
+        y = y_new;
+        z = z_new;
+    }
+
+    /* Clamp to Q1.14 range before narrowing to fp16_t */
+    if (x > (int32_t)FP16_MAX_VALUE)
+        x = (int32_t)FP16_MAX_VALUE;
+    if (x < (int32_t)FP16_MIN_VALUE)
+        x = (int32_t)FP16_MIN_VALUE;
+    if (y > (int32_t)FP16_MAX_VALUE)
+        y = (int32_t)FP16_MAX_VALUE;
+    if (y < (int32_t)FP16_MIN_VALUE)
+        y = (int32_t)FP16_MIN_VALUE;
+
+    *cos_out = (fp16_t)x;
+    *sin_out = (fp16_t)y;
+}
+
+/* Sine Function using CORDIC algorithm */
+/* Input: angle in Q1.14 radians, range [-pi/2, pi/2] */
+/* Output: sin(angle) in Q1.14 format */
+fp16_t fp16_sin(fp16_t angle)
+{
+    fp16_t cos_val, sin_val;
+    fp16_cordic_rotate(angle, &cos_val, &sin_val);
+    return sin_val;
+}
+
+/* Cosine Function using CORDIC algorithm */
+/* Input: angle in Q1.14 radians, range [-pi/2, pi/2] */
+/* Output: cos(angle) in Q1.14 format */
+fp16_t fp16_cos(fp16_t angle)
+{
+    fp16_t cos_val, sin_val;
+    fp16_cordic_rotate(angle, &cos_val, &sin_val);
+    return cos_val;
+}
+
+/* Arctangent Function using CORDIC vectoring mode */
+/* Input: y and x in Q1.14 format; x must be > 0 */
+/* Output: atan2(y, x) in Q1.14 radians, range [-pi/2, pi/2] */
+fp16_t fp16_atan2(fp16_t y_in, fp16_t x_in)
+{
+    if (x_in <= 0)
+    {
+        /* Degenerate: x <= 0 is outside the valid domain for this function.
+         * Return +/-pi/2 for x==0 (based on y sign), or FP16_MIN_VALUE as an
+         * error sentinel for x < 0.  atan2(0,0) is undefined: return 0. */
+        if (x_in == 0)
+        {
+            if (y_in > 0) return (fp16_t)FP16_HALF_PI;
+            if (y_in < 0) return (fp16_t)(-FP16_HALF_PI);
+            return (fp16_t)0; /* atan2(0,0): undefined, return 0 */
+        }
+        return (fp16_t)FP16_MIN_VALUE;
+    }
+
+    int32_t x = (int32_t)x_in;
+    int32_t y = (int32_t)y_in;
+    int32_t z = 0;
+    int i;
+
+    for (i = 0; i < FP16_CORDIC_ITERATIONS; i++)
+    {
+        /* d = -sign(y): rotate to drive y toward zero */
+        int32_t d = (y >= 0) ? -1 : 1;
+        int32_t x_new = x - d * (y >> i);
+        int32_t y_new = y + d * (x >> i);
+        int32_t z_new = z - d * (int32_t)fp16_cordic_atan_lut[i];
+        x = x_new;
+        y = y_new;
+        z = z_new;
+    }
+
+    /* Clamp to Q1.14 range */
+    if (z > (int32_t)FP16_MAX_VALUE)
+        z = (int32_t)FP16_MAX_VALUE;
+    if (z < (int32_t)FP16_MIN_VALUE)
+        z = (int32_t)FP16_MIN_VALUE;
+
+    return (fp16_t)z;
+}
 /* End of fixed-point-math.c */
