@@ -137,6 +137,16 @@ test_wrapper: $(LIBRARY) $(BIN_DIR)/test_fp16_wrapper
 $(BIN_DIR)/test_fp16_wrapper: $(TEST_DIR)/test_fp16_wrapper.c $(LIBRARY) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(LIBRARY) -lm
 
+# Build and run fp16_cordic tests
+.PHONY: test_cordic
+test_cordic: $(LIBRARY) $(BIN_DIR)/test_fp16_cordic
+	@echo "Running fp16_cordic tests..."
+	$(BIN_DIR)/test_fp16_cordic
+
+# Build rule for test_fp16_cordic
+$(BIN_DIR)/test_fp16_cordic: $(TEST_DIR)/test_fp16_cordic.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(LIBRARY) -lm
+
 # Clean build artifacts
 .PHONY: clean
 clean:
