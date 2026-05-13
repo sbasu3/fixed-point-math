@@ -137,6 +137,16 @@ test_wrapper: $(LIBRARY) $(BIN_DIR)/test_fp16_wrapper
 $(BIN_DIR)/test_fp16_wrapper: $(TEST_DIR)/test_fp16_wrapper.c $(LIBRARY) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(LIBRARY) -lm
 
+# Build and run fp16_cordic tests
+.PHONY: test_cordic
+test_cordic: $(LIBRARY) $(BIN_DIR)/test_fp16_cordic
+	@echo "Running fp16_cordic tests..."
+	$(BIN_DIR)/test_fp16_cordic
+
+# Build rule for test_fp16_cordic
+$(BIN_DIR)/test_fp16_cordic: $(TEST_DIR)/test_fp16_cordic.c $(LIBRARY) | $(BIN_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(LIBRARY) -lm
+
 # Clean build artifacts
 .PHONY: clean
 clean:
@@ -167,10 +177,12 @@ help:
 	@echo "Available targets:"
 	@echo "  all          - Build the library (default)"
 	@echo "  tests        - Build test executables"
-	@echo "  test         - Build and run tests"
-	@echo "  test_util    - Build and run util conversion tests"
-	@echo "  test_exp     - Build and run fp16_exp tests"
-	@echo "  test_poly_exp - Build and run fp16_poly_exp tests"
+	@echo "  test         - Build and run all tests"
+	@echo "  test_ln_range - Build and run ln range tests"
+	@echo "  test_inverse - Build and run inverse function tests"
+	@echo "  test_sqrt    - Build and run sqrt function tests"
+	@echo "  test_wrapper - Build and run wrapper function tests"
+	@echo "  test_cordic  - Build and run CORDIC trigonometric tests"
 	@echo "  clean        - Remove build artifacts"
 	@echo "  install      - Install library and headers to /usr/local"
 	@echo "  uninstall    - Remove installed library and headers"
