@@ -3,7 +3,9 @@
 
 # Compiler settings
 CC = gcc
+CXX = g++
 CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic -O2
+CXXFLAGS = -Wall -Wextra -Werror -std=c++17 -pedantic -O2
 INCLUDES = -Iinclude
 LDFLAGS = 
 
@@ -22,7 +24,9 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SOURCES))
 
 # Test files
 TEST_SOURCES = $(wildcard $(TEST_DIR)/*.c)
-TEST_BINARIES = $(patsubst $(TEST_DIR)/%.c,$(BIN_DIR)/%,$(TEST_SOURCES))
+TEST_CPP_SOURCES = $(wildcard $(TEST_DIR)/*.cpp)
+TEST_BINARIES = $(patsubst $(TEST_DIR)/%.c,$(BIN_DIR)/%,$(TEST_SOURCES)) \
+	$(patsubst $(TEST_DIR)/%.cpp,$(BIN_DIR)/%,$(TEST_CPP_SOURCES))
 
 # Library name
 LIBRARY = $(LIB_DIR)/libfixedpointmath.a
@@ -51,6 +55,10 @@ tests: $(LIBRARY) $(TEST_BINARIES)
 # Compile test executables
 $(BIN_DIR)/%: $(TEST_DIR)/%.c $(LIBRARY) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $(INCLUDES) $< $(LIBRARY) -o $@ -lm
+	@echo "Test binary created: $@"
+
+$(BIN_DIR)/%: $(TEST_DIR)/%.cpp $(LIBRARY) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $< $(LIBRARY) -o $@ -lm
 	@echo "Test binary created: $@"
 
 # Run tests
@@ -143,6 +151,23 @@ test_cordic: $(LIBRARY) $(BIN_DIR)/test_fp16_cordic
 	@echo "Running fp16_cordic tests..."
 	$(BIN_DIR)/test_fp16_cordic
 
+# Build C++ test executables only
+.PHONY: test_cpp
+test_cpp: $(LIBRARY) $(patsubst $(TEST_DIR)/%.cpp,$(BIN_DIR)/%,$(TEST_CPP_SOURCES))
+	@echo "C++ test binaries built."
+
+# Build and run fixed-point template NaN tests
+.PHONY: test_nan
+test_nan: $(LIBRARY) $(BIN_DIR)/test_fp_template_nan
+	@echo "Running fixed-point template NaN tests..."
+	$(BIN_DIR)/test_fp_template_nan
+
+# Build and run generic fixed-point utility tests
+.PHONY: test_generic_util
+test_generic_util: $(LIBRARY) $(BIN_DIR)/test_fp_generic_util
+	@echo "Running generic fixed-point utility tests..."
+	$(BIN_DIR)/test_fp_generic_util
+
 # Build rule for test_fp16_cordic
 $(BIN_DIR)/test_fp16_cordic: $(TEST_DIR)/test_fp16_cordic.c $(LIBRARY) | $(BIN_DIR)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $< $(LIBRARY) -lm
@@ -183,6 +208,9 @@ help:
 	@echo "  test_sqrt    - Build and run sqrt function tests"
 	@echo "  test_wrapper - Build and run wrapper function tests"
 	@echo "  test_cordic  - Build and run CORDIC trigonometric tests"
+	@echo "  test_cpp     - Build all C++ test executables"
+	@echo "  test_nan     - Build and run fixed-point template NaN tests"
+	@echo "  test_generic_util - Build and run generic fixed-point utility tests"
 	@echo "  clean        - Remove build artifacts"
 	@echo "  install      - Install library and headers to /usr/local"
 	@echo "  uninstall    - Remove installed library and headers"
