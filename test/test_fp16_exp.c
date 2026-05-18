@@ -51,7 +51,7 @@ void test_fp16_exp_in_range(test_stats_t *stats)
 
         /* Convert to fp16, apply exp, convert back */
         fp16_t fp_input = double_to_fp16(test_val);
-        fp16_t fp_result = fp16_exp(fp_input);
+        fp16_t fp_result = fp16_poly_exp(fp_input);
         double result = fp16_to_double(fp_result);
 
         /* Calculate expected value */
@@ -104,7 +104,7 @@ void test_fp16_exp_positive_extended(test_stats_t *stats)
 
         /* Convert to fp16, apply exp, convert back */
         fp16_t fp_input = double_to_fp16(test_val);
-        fp16_t fp_result = fp16_exp(fp_input);
+        fp16_t fp_result = fp16_poly_exp(fp_input);
         double result = fp16_to_double(fp_result);
 
         /* Calculate expected value */
@@ -157,7 +157,7 @@ void test_fp16_exp_negative_extended(test_stats_t *stats)
 
         /* Convert to fp16, apply exp, convert back */
         fp16_t fp_input = double_to_fp16(test_val);
-        fp16_t fp_result = fp16_exp(fp_input);
+        fp16_t fp_result = fp16_poly_exp(fp_input);
         double result = fp16_to_double(fp_result);
 
         /* Calculate expected value */
@@ -209,7 +209,7 @@ void test_fp16_exp_mixed(test_stats_t *stats)
 
         /* Convert to fp16, apply exp, convert back */
         fp16_t fp_input = double_to_fp16(test_val);
-        fp16_t fp_result = fp16_exp(fp_input);
+        fp16_t fp_result = fp16_poly_exp(fp_input);
         double result = fp16_to_double(fp_result);
 
         /* Calculate expected value */
@@ -253,7 +253,7 @@ void test_fp16_exp_special_cases(void)
 
     /* Test exp(0) = 1 */
     fp16_t zero = double_to_fp16(0.0);
-    fp16_t result_zero = fp16_exp(zero);
+    fp16_t result_zero = fp16_poly_exp(zero);
     double result_zero_d = fp16_to_double(result_zero);
     double expected_zero = 1.0;
     double error_zero = abs_error(result_zero_d, expected_zero);
@@ -273,7 +273,7 @@ void test_fp16_exp_special_cases(void)
 
     /* Test exp(ln(2)) ≈ 2 */
     fp16_t ln2 = double_to_fp16(0.693147);
-    fp16_t result_ln2 = fp16_exp(ln2);
+    fp16_t result_ln2 = fp16_poly_exp(ln2);
     double result_ln2_d = fp16_to_double(result_ln2);
     double expected_ln2 = 2.0;
     double error_ln2 = abs_error(result_ln2_d, expected_ln2);
@@ -293,7 +293,7 @@ void test_fp16_exp_special_cases(void)
 
     /* Test exp(-ln(2)) ≈ 0.5 */
     fp16_t neg_ln2 = double_to_fp16(-0.693147);
-    fp16_t result_neg_ln2 = fp16_exp(neg_ln2);
+    fp16_t result_neg_ln2 = fp16_poly_exp(neg_ln2);
     double result_neg_ln2_d = fp16_to_double(result_neg_ln2);
     double expected_neg_ln2 = 0.5;
     double error_neg_ln2 = abs_error(result_neg_ln2_d, expected_neg_ln2);
