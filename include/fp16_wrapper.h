@@ -25,4 +25,18 @@ double fp16_double_exp(double x);
 double fp16_double_ln(double x);
 double fp16_double_inverse(double x);
 double fp16_double_sqrt(double x);
+
+/* ========================================================================
+ * CORDIC Trigonometric Wrappers
+ * Float and double wrappers for sin, cos, and atan2.
+ * These perform range reduction to support angles beyond [-pi/2, pi/2].
+ * ======================================================================== */
+float fp16_float_sin(float angle);
+float fp16_float_cos(float angle);
+float fp16_float_atan2(float y, float x);
+
+double fp16_double_sin(double angle);
+double fp16_double_cos(double angle);
+double fp16_double_atan2(double y, double x);
+
 #endif /* FP16_WRAPPER_H */

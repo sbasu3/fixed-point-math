@@ -38,7 +38,7 @@ Benchmarks on typical x86-64 systems:
 - **C Compiler**: GCC or compatible compiler with C99 support
 - **Make**: GNU Make or compatible build system
 - **Standard C Library**: For `<stdint.h>`, `<stdio.h>`, `<math.h>` (test only), `<time.h>` (test only)
-- **Math Library**: `-lm` flag required for linking (libm)
+- **Math Library**: `-lm` flag required for linking test and benchmarking files(libm)
 
 ### Runtime Requirements
 
